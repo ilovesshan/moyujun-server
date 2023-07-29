@@ -13,6 +13,7 @@ public class Token {
     private String refreshToken;
     private String tokenKey;
     private String appId;
+    private long deleted;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date createTime;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")

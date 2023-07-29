@@ -1,7 +1,10 @@
 package com.ilovesshan.user.model.po;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+
+import java.util.Date;
 
 @Data
 public class Follow {
@@ -9,5 +12,9 @@ public class Follow {
     private String id;
     private String userId;
     private String followId;
-
+    private long deleted;
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date createTime;
+    @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
+    private Date updateTime;
 }

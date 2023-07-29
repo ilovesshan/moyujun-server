@@ -12,6 +12,7 @@ public class LoginLog {
     private String userId;
     private String loginIp;
     private long loginFrom;
+    private long deleted;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date createTime;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")

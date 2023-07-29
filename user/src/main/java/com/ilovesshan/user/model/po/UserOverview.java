@@ -14,6 +14,7 @@ public class UserOverview {
     private long fansCount;
     private long followsCount;
     private Date onTime;
+    private long deleted;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date createTime;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")

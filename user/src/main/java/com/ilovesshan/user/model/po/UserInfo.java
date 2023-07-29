@@ -23,6 +23,7 @@ public class UserInfo {
     private String sing;
     private String location;
     private long level;
+    private long deleted;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date createTime;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")

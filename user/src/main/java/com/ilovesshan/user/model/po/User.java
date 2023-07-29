@@ -13,8 +13,8 @@ public class User {
     private String username;
     private String password;
     private String salt;
-    private long deleted;
     private long status;
+    private long deleted;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
     private Date createTime;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm:ss")
