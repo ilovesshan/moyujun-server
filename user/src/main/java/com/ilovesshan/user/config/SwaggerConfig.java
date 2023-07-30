@@ -19,8 +19,8 @@ public class SwaggerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.ilovesshan.user.controller"))
-//                .apis(RequestHandlerSelectors.basePackage("com.ilovesshan.common.model"))
                 .build()
+                .enable(true)
                 .apiInfo(apiInfo());
     }
 

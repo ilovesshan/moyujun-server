@@ -1,12 +1,20 @@
 package com.ilovesshan.user.controller.protal;
 
 import com.ilovesshan.common.model.R;
+import com.ilovesshan.user.util.RedisCache;
 import com.ilovesshan.user.model.po.UserInfo;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,7 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/check")
 @Api(tags = "验证码/手机号/邮箱模块")
+@Slf4j
 public class CheckCodeController {
+
+    @Resource
+    private RedisCache redisCache;
 
     @GetMapping("/captcha")
     @ApiOperation(value = "获取图灵验证码")
@@ -32,7 +44,12 @@ public class CheckCodeController {
     )
     @ApiOperation(value = "获取手机验证码")
     public R<UserInfo> getPhoneCheckCode() {
-        return R.success(new UserInfo());
+        val userInfo = new UserInfo();
+        redisCache.set("userinfo", userInfo, 20);
+        log.debug("set ok~");
+        val t = redisCache.get("userinfo", UserInfo.class);
+        log.debug("get ok~");
+        return R.success(t);
     }
 
     @GetMapping("/email")

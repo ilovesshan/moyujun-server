@@ -5,11 +5,20 @@ spring:
   application:
     name: user-service
 
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/moyujun
     username: root
     password: 123456
+
+  redis:
+    host: 192.168.117.128
+    port: 6379
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
 
 mybatis-plus:
   type-aliases-package: com.ilovesshan.user.model.po
