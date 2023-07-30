@@ -1,17 +1,20 @@
 package com.ilovesshan.common.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
+/**
+ * Created with IntelliJ IDEA.
+ *
+ * @author: ilovesshan
+ * @date: 2023/7/30
+ * @description:
+ */
+
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class R implements Serializable {
+public class R<T> implements Serializable {
+
     private static final long serialVersionUID = 1946123740512009003L;
 
     public static final int SUCCESS_CODE = 200;
@@ -20,9 +23,9 @@ public class R implements Serializable {
     public static final int ERROR_CODE_FORBIDDEN = 403;
     public static final int ERROR_CODE_INTERNAL_SERVER = 500;
 
+
     public static final String SUCCESS_MESSAGE = "操作成功";
     public static final String ERROR_MESSAGE = "操作失败";
-
 
     public static final String SUCCESS_MESSAGE_SELECT = "查询成功";
     public static final String SUCCESS_MESSAGE_INSERT = "新增成功";
@@ -54,6 +57,7 @@ public class R implements Serializable {
     public static final String ERROR_USER_NOT_FOUND = "用户不存在";
     public static final String ERROR_USER_ALREADY_EXIST = "用户已经存在";
 
+
     public static final String ERROR_RESOURCES_NOTFOUND = "资源不存在";
     public static final String ERROR_RESOURCES_EXISTS = "资源已存在";
     public static final String SUCCESS_ATTACHMENT_UPLOAD = "附件上传成功";
@@ -63,56 +67,99 @@ public class R implements Serializable {
 
     private Integer code;
     private String message;
-    private Object data;
+    private T data;
 
-    public static R success() {
-        return R.builder().code(R.SUCCESS_CODE).message(R.SUCCESS_MESSAGE).build();
+
+    public static <T> R<T> success() {
+        val r = new R<T>();
+        r.setCode(SUCCESS_CODE);
+        r.setMessage(SUCCESS_MESSAGE);
+        return r;
     }
 
-    public static R success(String message) {
-        return R.builder().code(R.SUCCESS_CODE).message(message).build();
+    public static <T> R<T> success(String message) {
+        val r = new R<T>();
+        r.setCode(SUCCESS_CODE);
+        r.setMessage(message);
+        return r;
     }
 
-    public static R success(Object data) {
-        return R.builder().code(R.SUCCESS_CODE).message(R.SUCCESS_MESSAGE).data(data).build();
+    public static <T> R<T> success(T data) {
+        val r = new R<T>();
+        r.setCode(SUCCESS_CODE);
+        r.setMessage(SUCCESS_MESSAGE);
+        r.setData(data);
+        return r;
     }
 
-    public static R success(String message, Object data) {
-        return R.builder().code(R.SUCCESS_CODE).message(message).data(data).build();
-    }
-
-
-    public static R fail() {
-        return R.builder().code(R.ERROR_CODE_CLIENT).message(R.ERROR_MESSAGE).build();
-    }
-
-    public static R fail(String message) {
-        return R.builder().code(R.ERROR_CODE_CLIENT).message(message).build();
-    }
-
-    public static R fail(Object data) {
-        return R.builder().code(R.ERROR_CODE_CLIENT).message(R.ERROR_MESSAGE).data(data).build();
-    }
-
-    public static R fail(String message, Object data) {
-        return R.builder().code(R.ERROR_CODE_CLIENT).message(message).data(data).build();
+    public static <T> R<T> success(String message, T data) {
+        val r = new R<T>();
+        r.setCode(SUCCESS_CODE);
+        r.setMessage(message);
+        r.setData(data);
+        return r;
     }
 
 
-    public static R error() {
-        return R.builder().code(R.ERROR_CODE_INTERNAL_SERVER).message(R.ERROR_MESSAGE).build();
+    public static <T> R<T> fail() {
+        val r = new R<T>();
+        r.setCode(ERROR_CODE_CLIENT);
+        r.setMessage(ERROR_MESSAGE);
+        return r;
     }
 
-    public static R error(String message) {
-        return R.builder().code(R.ERROR_CODE_INTERNAL_SERVER).message(message).build();
+    public static <T> R<T> fail(String message) {
+        val r = new R<T>();
+        r.setCode(ERROR_CODE_CLIENT);
+        r.setMessage(message);
+        return r;
     }
 
-    public static R error(Object data) {
-        return R.builder().code(R.ERROR_CODE_INTERNAL_SERVER).message(R.SUCCESS_MESSAGE).data(data).build();
+    public static <T> R<T> fail(T data) {
+        val r = new R<T>();
+        r.setCode(ERROR_CODE_CLIENT);
+        r.setMessage(ERROR_MESSAGE);
+        r.setData(data);
+        return r;
     }
 
-    public static R error(String message, Object data) {
-        return R.builder().code(R.ERROR_CODE_INTERNAL_SERVER).message(message).data(data).build();
+    public static <T> R<T> fail(String message, T data) {
+        val r = new R<T>();
+        r.setCode(ERROR_CODE_CLIENT);
+        r.setMessage(message);
+        r.setData(data);
+        return r;
+    }
+
+
+    public static <T> R<T> error() {
+        val r = new R<T>();
+        r.setCode(ERROR_CODE_INTERNAL_SERVER);
+        r.setMessage(ERROR_MESSAGE);
+        return r;
+    }
+
+    public static <T> R<T> error(String message) {
+        val r = new R<T>();
+        r.setCode(ERROR_CODE_INTERNAL_SERVER);
+        r.setMessage(message);
+        return r;
+    }
+
+    public static <T> R<T> error(T data) {
+        val r = new R<T>();
+        r.setCode(ERROR_CODE_INTERNAL_SERVER);
+        r.setMessage(ERROR_MESSAGE);
+        r.setData(data);
+        return r;
+    }
+
+    public static <T> R<T> error(String message, T data) {
+        val r = new R<T>();
+        r.setCode(ERROR_CODE_INTERNAL_SERVER);
+        r.setMessage(message);
+        r.setData(data);
+        return r;
     }
 
 }
