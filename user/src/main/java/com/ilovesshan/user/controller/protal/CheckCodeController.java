@@ -1,6 +1,7 @@
 package com.ilovesshan.user.controller.protal;
 
 import com.ilovesshan.common.model.R;
+import com.ilovesshan.user.service.CheckCodeService;
 import com.ramostear.captcha.HappyCaptcha;
 import com.ramostear.captcha.support.CaptchaStyle;
 import io.swagger.annotations.Api;
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,6 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 @Api(tags = "图灵验证码/手机号/邮箱模块")
 @Slf4j
 public class CheckCodeController {
+
+    @Resource
+    private CheckCodeService checkCodeService;
 
     @GetMapping("/captcha")
     @ApiOperation(value = "获取图灵验证码")
@@ -69,22 +74,34 @@ public class CheckCodeController {
         return R.success();
     }
 
-    @GetMapping("/email")
-    @ApiOperation(value = "获取邮箱验证码")
-    public R getEmailCheckCode() {
-        return R.success();
-    }
-
     @PostMapping("/phone")
     @ApiOperation(value = "校验手机号")
     public R checkPhone() {
         return R.success();
     }
 
-    @PostMapping("/email")
-    @ApiOperation(value = "校验邮箱")
-    public R checkEmail() {
-        return R.success();
+    @GetMapping("/email")
+    @ApiOperation(value = "获取邮箱验证码")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "email", value = "邮箱地址", dataType = "String", paramType = "query"),
+            }
+    )
+    public R getEmailCheckCode(@RequestParam() String email) {
+        boolean isSuccess = checkCodeService.getEmailVerifyCode(email);
+        return isSuccess ? R.success(R.SUCCESS_SEND_MESSAGE) : R.fail(R.ERROR_SEND_MESSAGE);
     }
 
+    @PostMapping("/email")
+    @ApiOperation(value = "校验邮箱")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "email", value = "邮箱地址", dataType = "String", paramType = "query"),
+                    @ApiImplicitParam(name = "code", value = "验证码", dataType = "String", paramType = "query"),
+            }
+    )
+    public R checkEmail(@RequestParam() String email, @RequestParam() String code) {
+        boolean isSuccess = checkCodeService.checkEmailVerifyCode(email, code);
+        return isSuccess ? R.success(R.SUCCESS_VERIFY_MESSAGE) : R.fail(R.ERROR_VERIFY_MESSAGE);
+    }
 }

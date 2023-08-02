@@ -30,6 +30,9 @@ public class R<T> implements Serializable {
     public static final String SUCCESS_VERIFY_MESSAGE = "校验成功";
     public static final String ERROR_VERIFY_MESSAGE = "校验失败";
 
+    public static final String SUCCESS_SEND_MESSAGE = "发送成功";
+    public static final String ERROR_SEND_MESSAGE = "发送失败";
+
     public static final String SUCCESS_MESSAGE_SELECT = "查询成功";
     public static final String SUCCESS_MESSAGE_INSERT = "新增成功";
     public static final String SUCCESS_MESSAGE_DELETE = "删除成功";
@@ -123,6 +126,13 @@ public class R<T> implements Serializable {
         r.setCode(ERROR_CODE_CLIENT);
         r.setMessage(ERROR_MESSAGE);
         r.setData(data);
+        return r;
+    }
+
+    public static <T> R<T> fail(int code, String message) {
+        val r = new R<T>();
+        r.setCode(code);
+        r.setMessage(message);
         return r;
     }
 
