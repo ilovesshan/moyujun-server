@@ -35,6 +35,7 @@
         <mybatis-plus-boot-starter.version>3.5.2</mybatis-plus-boot-starter.version>
         <swagger2.version>2.8.0</swagger2.version>
         <fastjson.version>2.0.31</fastjson.version>
+        <jjwt.version>0.9.0</jjwt.version>
 
     </properties>
 
