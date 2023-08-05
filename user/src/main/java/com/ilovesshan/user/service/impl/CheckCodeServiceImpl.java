@@ -2,12 +2,11 @@ package com.ilovesshan.user.service.impl;
 
 import com.ilovesshan.common.excpetion.CustomException;
 import com.ilovesshan.common.util.RandomUtil;
+import com.ilovesshan.user.constants.Constants;
 import com.ilovesshan.user.service.CheckCodeService;
+import com.ilovesshan.user.util.MailSenderUtil;
 import com.ilovesshan.user.util.RedisCache;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -25,7 +24,7 @@ import javax.annotation.Resource;
 public class CheckCodeServiceImpl implements CheckCodeService {
 
     @Resource
-    private JavaMailSender javaMailSender;
+    private MailSenderUtil mailSenderUtil;
 
     @Resource
     private RedisCache redisCache;
@@ -33,22 +32,25 @@ public class CheckCodeServiceImpl implements CheckCodeService {
 
     @Override
     public boolean getEmailVerifyCode(String email) {
-        val verifyCode = RandomUtil.getRandomStr(6);
-
-        SimpleMailMessage message = new SimpleMailMessage();
-        // 发件人
-        message.setFrom("2665939276@qq.com");
-        // 收件人(可实现批量发送)
-        message.setTo(email);
-        // 邮箱标题
-        message.setSubject("【摸鱼君门户网站】");
-        // 邮箱内容
-        message.setText("亲爱的" + email + "恭喜您即将成为摸鱼君门户网站的一员，您本次的验证码为 " + verifyCode + "【3分钟内有效】, 请勿将此验证码转发或者提供给其他人~");
+        // 做一个限流 一分钟只能发一次
+        int limits = 0;
+        try {
+            limits = redisCache.get(Constants.UserKey.REDIS_CODE_LIMIT_PREFIX + email, int.class);
+        } catch (Exception ignored) {
+        }
+        if (limits >= 2) {
+            throw new CustomException("验证码调用频繁，请稍再试");
+        } else {
+            limits++;
+            redisCache.set(Constants.UserKey.REDIS_CODE_LIMIT_PREFIX + email, limits, Constants.TimeKey.ONE_MINUTES);
+        }
+        // 生成验证码
+        String verifyCode = RandomUtil.getRandomStr(6);
         // 发送邮件
         try {
-            javaMailSender.send(message);
-            // 将验证码和邮箱地址存入Redis 有效期1分钟
-            redisCache.set(email, email + "_%_" + verifyCode, 60 * 3);
+            mailSenderUtil.send(email, verifyCode);
+            // 将验证码和邮箱地址存入Redis 有效期3分钟
+            redisCache.set(Constants.UserKey.REDIS_CODE_PREFIX + email, email + "_%_" + verifyCode, Constants.TimeKey.ONE_MINUTES * 3);
         } catch (Exception exception) {
             log.error("电子邮箱验证失败: {}", exception.getMessage(), exception);
             throw new CustomException("电子邮箱服务繁忙，请稍后再试");
