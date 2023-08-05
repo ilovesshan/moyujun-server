@@ -27,6 +27,9 @@ public class Register {
     @ApiModelProperty(value = "用户ID")
     private String userId;
 
+    @ApiModelProperty(value = "邮箱")
+    private String email;
+
     @ApiModelProperty(value = "注册来源 0-未知, 1-Android, 2-Ios, 3-小程序, 4-Web")
     private long registerFrom;
 

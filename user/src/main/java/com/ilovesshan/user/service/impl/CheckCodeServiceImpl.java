@@ -63,7 +63,7 @@ public class CheckCodeServiceImpl implements CheckCodeService {
 
     @Override
     public boolean checkEmailVerifyCode(String email, String code) {
-        String verifyCode = redisCache.get(email, String.class);
+        String verifyCode = redisCache.get(Constants.UserKey.REDIS_CODE_PREFIX + email, String.class);
         if (verifyCode != null) {
             String[] kv = verifyCode.split("_%_");
             if (email.equals(kv[0]) && code.equals(kv[1])) {

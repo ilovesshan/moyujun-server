@@ -25,6 +25,9 @@ public class User {
     @ApiModelProperty(value = "用户详情ID")
     private String userInfoId;
 
+    @ApiModelProperty(value = "邮箱")
+    private String email;
+
     @ApiModelProperty(value = "用户名")
     private String username;
 
