@@ -9,14 +9,19 @@ import lombok.Data;
 import java.util.Date;
 
 
+/**
+ * Created with IntelliJ IDEA.
+ *
+ * @author: ilovesshan
+ * @date: 2023/8/5
+ * @description:
+ */
+
 @Data
 @ApiModel
 public class UserInfo {
-
     @ApiModelProperty(value = "主键ID")
     private String id;
-    @ApiModelProperty(value = "用户ID")
-    private String userId;
     @ApiModelProperty(value = "性别 0-未知, 1-男, 2-女")
     private long sex;
     @ApiModelProperty(value = "出生日期")
