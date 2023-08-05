@@ -2,6 +2,7 @@ package com.ilovesshan.user.service.impl;
 
 import com.ilovesshan.common.excpetion.CustomException;
 import com.ilovesshan.common.util.RandomUtil;
+import com.ilovesshan.common.util.WebUtils;
 import com.ilovesshan.user.constants.Constants;
 import com.ilovesshan.user.service.CheckCodeService;
 import com.ilovesshan.user.util.MailSenderUtil;
@@ -33,9 +34,10 @@ public class CheckCodeServiceImpl implements CheckCodeService {
     @Override
     public boolean getEmailVerifyCode(String email) {
         // 做一个限流 一分钟只能发一次
+        String requestIp = WebUtils.getRequestIp();
         int limits = 0;
         try {
-            limits = redisCache.get(Constants.UserKey.REDIS_CODE_LIMIT_PREFIX + email, int.class);
+            limits = redisCache.get(Constants.UserKey.REDIS_CODE_LIMIT_PREFIX + requestIp, int.class);
         } catch (Exception ignored) {
         }
         if (limits >= 2) {
@@ -43,7 +45,7 @@ public class CheckCodeServiceImpl implements CheckCodeService {
             throw new CustomException("验证码调用频繁，请稍再试");
         } else {
             limits++;
-            redisCache.set(Constants.UserKey.REDIS_CODE_LIMIT_PREFIX + email, limits, Constants.TimeKey.ONE_MINUTES);
+            redisCache.set(Constants.UserKey.REDIS_CODE_LIMIT_PREFIX + requestIp, limits, Constants.TimeKey.ONE_MINUTES);
         }
         // 生成验证码
         String verifyCode = RandomUtil.getRandomStr(6);
