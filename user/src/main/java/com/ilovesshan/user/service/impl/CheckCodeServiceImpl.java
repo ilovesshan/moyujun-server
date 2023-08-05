@@ -38,7 +38,8 @@ public class CheckCodeServiceImpl implements CheckCodeService {
             limits = redisCache.get(Constants.UserKey.REDIS_CODE_LIMIT_PREFIX + email, int.class);
         } catch (Exception ignored) {
         }
-        if (limits >= 2) {
+        if (limits >= 1) {
+            log.error("验证码调用频繁，请稍再试");
             throw new CustomException("验证码调用频繁，请稍再试");
         } else {
             limits++;
