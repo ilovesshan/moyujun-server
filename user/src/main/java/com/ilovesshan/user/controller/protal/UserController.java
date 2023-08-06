@@ -1,5 +1,6 @@
 package com.ilovesshan.user.controller.protal;
 
+import com.ilovesshan.common.constants.Constants;
 import com.ilovesshan.common.model.R;
 import com.ilovesshan.common.util.UuidUtil;
 import com.ilovesshan.user.model.dto.UserLoginDto;
@@ -30,8 +31,8 @@ public class UserController {
 
     @PostMapping("/singIn")
     @ApiOperation(value = "用户注册")
-    public R singIn(@RequestBody @Validated UserRegisterDto userRegisterDto) {
-        boolean isSuccess = userService.register(userRegisterDto);
+    public R singUp(@RequestBody @Validated UserRegisterDto userRegisterDto) {
+        boolean isSuccess = userService.singUp(userRegisterDto);
         return isSuccess ? R.success(R.SUCCESS_MESSAGE_REGISTER) : R.fail(R.ERROR_MESSAGE_REGISTER);
     }
 
@@ -45,6 +46,12 @@ public class UserController {
     @GetMapping("/salt")
     @ApiOperation(value = "获取盐（字段加密）")
     public R<String> salt() {
-        return R.success(R.SUCCESS_MESSAGE, UuidUtil.generator());
+        return R.success(R.SUCCESS_ACQUIRE_MESSAGE, UuidUtil.generator());
+    }
+
+    @GetMapping("/rsa")
+    @ApiOperation(value = "获取公钥")
+    public R<String> rsa() {
+        return R.success(R.SUCCESS_ACQUIRE_MESSAGE, Constants.RASKey.PUBLIC_KEY);
     }
 }

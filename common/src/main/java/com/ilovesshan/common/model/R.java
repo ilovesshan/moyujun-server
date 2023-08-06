@@ -30,6 +30,9 @@ public class R<T> implements Serializable {
     public static final String SUCCESS_VERIFY_MESSAGE = "校验成功";
     public static final String ERROR_VERIFY_MESSAGE = "校验失败";
 
+    public static final String SUCCESS_ACQUIRE_MESSAGE = "获取成功";
+    public static final String ERROR_ACQUIRE_MESSAGE = "获取失败";
+
     public static final String SUCCESS_SEND_MESSAGE = "发送成功";
     public static final String ERROR_SEND_MESSAGE = "发送失败";
 

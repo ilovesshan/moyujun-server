@@ -12,7 +12,7 @@ import com.ilovesshan.user.model.vo.UserLoginVo;
  * @description:
  */
 public interface UserService {
-    boolean register(UserRegisterDto userRegisterDto);
+    boolean singUp(UserRegisterDto userRegisterDto);
 
     UserLoginVo singIn(UserLoginDto userLoginDto);
 }

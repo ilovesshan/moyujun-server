@@ -1,12 +1,9 @@
 package com.ilovesshan.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.ilovesshan.common.constants.Constants;
 import com.ilovesshan.common.excpetion.CustomException;
-import com.ilovesshan.common.model.R;
-import com.ilovesshan.common.util.AesUtil;
-import com.ilovesshan.common.util.JwtUtil;
-import com.ilovesshan.common.util.UuidUtil;
-import com.ilovesshan.common.util.WebUtils;
+import com.ilovesshan.common.util.*;
 import com.ilovesshan.user.mapper.RegisterMapper;
 import com.ilovesshan.user.mapper.UserInfoMapper;
 import com.ilovesshan.user.mapper.UserMapper;
@@ -19,6 +16,7 @@ import com.ilovesshan.user.model.vo.UserLoginVo;
 import com.ilovesshan.user.model.vo.UserVo;
 import com.ilovesshan.user.service.CheckCodeService;
 import com.ilovesshan.user.service.UserService;
+import com.ilovesshan.user.util.RedisCache;
 import lombok.val;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -38,6 +36,9 @@ import javax.annotation.Resource;
 public class UserServiceImpl implements UserService {
 
     @Resource
+    private RedisCache redisCache;
+
+    @Resource
     private CheckCodeService checkCodeService;
 
     @Resource
@@ -50,12 +51,12 @@ public class UserServiceImpl implements UserService {
     private RegisterMapper registerMapper;
 
     @Override
-    @Transactional
-    public boolean register(UserRegisterDto userRegisterDto) {
+    @Transactional(rollbackFor = {RuntimeException.class})
+    public boolean singUp(UserRegisterDto userRegisterDto) {
         // 看看验证码是否正确
         boolean verifyCode = checkCodeService.checkEmailVerifyCode(userRegisterDto.getEmail(), userRegisterDto.getVerifyCode());
         if (!verifyCode) {
-            throw new CustomException(R.ERROR_VERIFY_MESSAGE);
+            throw new CustomException("验证码不正确,看准确了再试试~");
         }
 
         // 看看邮箱是否以已经存在了
@@ -78,8 +79,7 @@ public class UserServiceImpl implements UserService {
         user.setUserInfoId(userInfo.getId());
         user.setUsername(userRegisterDto.getUsername());
         user.setEmail(userRegisterDto.getEmail());
-        String pwd = AesUtil.encrypt(userRegisterDto.getPassword());
-        user.setPassword(pwd);
+        user.setPassword(userRegisterDto.getPassword());
         user.setSalt(userRegisterDto.getSalt());
         userMapper.insert(user);
 
@@ -107,16 +107,20 @@ public class UserServiceImpl implements UserService {
         if (selectedUser == null) {
             throw new CustomException("用户信息不存在，去注册一个吧");
         }
-        if (!selectedUser.getPassword().equals(AesUtil.encrypt(userLoginDto.getPassword()))) {
+        // 对用户传入的密码进行加盐以及RSA加密 再和数据库密码查询到的密码进行对比
+        String encryptPwd = RSAUtils.encryptedDataOnJava(userLoginDto.getPassword() + selectedUser.getSalt(), Constants.RASKey.PUBLIC_KEY);
+        if (!selectedUser.getPassword().equals(encryptPwd)) {
             throw new CustomException("密码输入错误啦，再试试");
         }
+        // 将当前用户信息存在redis中(7天过期)
+        redisCache.set(Constants.UserKey.REDIS_USER_PREFIX + selectedUser.getId(), selectedUser, Constants.TimeKey.SEVEN_DAY);
 
         // 只返回前端部分用户信息
         val userVo = new UserVo();
         BeanUtils.copyProperties(selectedUser, userVo);
 
         // 生成token
-        val token = JwtUtil.generatorToken(selectedUser.getId(), selectedUser.getEmail());
+        val token = JwtUtil.generatorToken(selectedUser.getId(), selectedUser.getUsername());
 
         UserLoginVo userLoginVo = new UserLoginVo();
         userLoginVo.setToken(token);

@@ -3,7 +3,7 @@ package com.ilovesshan.user.service.impl;
 import com.ilovesshan.common.excpetion.CustomException;
 import com.ilovesshan.common.util.RandomUtil;
 import com.ilovesshan.common.util.WebUtils;
-import com.ilovesshan.user.constants.Constants;
+import com.ilovesshan.common.constants.Constants;
 import com.ilovesshan.user.service.CheckCodeService;
 import com.ilovesshan.user.util.MailSenderUtil;
 import com.ilovesshan.user.util.RedisCache;
