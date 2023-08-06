@@ -29,6 +29,11 @@ public interface Constants {
         String HEADER_VALUE_PREFIX = "Bearer ";
     }
 
+
+    interface AesKey {
+        String AES_KEY = "0af0f9761cc34f8cb9c3658d8eb2ae29";
+    }
+
     interface AttachmentKey {
         // 附件上传地址(windows)
         String ATTACHMENT_UPLOAD_WINDOWS_DEST = "D:/www/myjun/upload/";

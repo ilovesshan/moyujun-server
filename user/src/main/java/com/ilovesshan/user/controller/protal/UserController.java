@@ -2,7 +2,9 @@ package com.ilovesshan.user.controller.protal;
 
 import com.ilovesshan.common.model.R;
 import com.ilovesshan.common.util.UuidUtil;
+import com.ilovesshan.user.model.dto.UserLoginDto;
 import com.ilovesshan.user.model.dto.UserRegisterDto;
+import com.ilovesshan.user.model.vo.UserLoginVo;
 import com.ilovesshan.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -33,9 +35,16 @@ public class UserController {
         return isSuccess ? R.success(R.SUCCESS_MESSAGE_REGISTER) : R.fail(R.ERROR_MESSAGE_REGISTER);
     }
 
+    @PostMapping("/singUp")
+    @ApiOperation(value = "用户登录")
+    public R<UserLoginVo> singIn(@RequestBody @Validated UserLoginDto userLoginDto) {
+        UserLoginVo userLoginVo = userService.singIn(userLoginDto);
+        return R.success(R.SUCCESS_MESSAGE_LOGIN, userLoginVo);
+    }
+
     @GetMapping("/salt")
     @ApiOperation(value = "获取盐（字段加密）")
-    public R salt() {
+    public R<String> salt() {
         return R.success(R.SUCCESS_MESSAGE, UuidUtil.generator());
     }
 }

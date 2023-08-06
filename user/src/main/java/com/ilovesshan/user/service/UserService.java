@@ -1,6 +1,8 @@
 package com.ilovesshan.user.service;
 
+import com.ilovesshan.user.model.dto.UserLoginDto;
 import com.ilovesshan.user.model.dto.UserRegisterDto;
+import com.ilovesshan.user.model.vo.UserLoginVo;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,4 +13,6 @@ import com.ilovesshan.user.model.dto.UserRegisterDto;
  */
 public interface UserService {
     boolean register(UserRegisterDto userRegisterDto);
+
+    UserLoginVo singIn(UserLoginDto userLoginDto);
 }

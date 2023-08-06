@@ -3,18 +3,24 @@ package com.ilovesshan.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ilovesshan.common.excpetion.CustomException;
 import com.ilovesshan.common.model.R;
+import com.ilovesshan.common.util.AesUtil;
+import com.ilovesshan.common.util.JwtUtil;
 import com.ilovesshan.common.util.UuidUtil;
 import com.ilovesshan.common.util.WebUtils;
 import com.ilovesshan.user.mapper.RegisterMapper;
 import com.ilovesshan.user.mapper.UserInfoMapper;
 import com.ilovesshan.user.mapper.UserMapper;
+import com.ilovesshan.user.model.dto.UserLoginDto;
 import com.ilovesshan.user.model.dto.UserRegisterDto;
 import com.ilovesshan.user.model.po.Register;
 import com.ilovesshan.user.model.po.User;
 import com.ilovesshan.user.model.po.UserInfo;
+import com.ilovesshan.user.model.vo.UserLoginVo;
+import com.ilovesshan.user.model.vo.UserVo;
 import com.ilovesshan.user.service.CheckCodeService;
 import com.ilovesshan.user.service.UserService;
 import lombok.val;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,7 +78,8 @@ public class UserServiceImpl implements UserService {
         user.setUserInfoId(userInfo.getId());
         user.setUsername(userRegisterDto.getUsername());
         user.setEmail(userRegisterDto.getEmail());
-        user.setPassword(userRegisterDto.getPassword());
+        String pwd = AesUtil.encrypt(userRegisterDto.getPassword());
+        user.setPassword(pwd);
         user.setSalt(userRegisterDto.getSalt());
         userMapper.insert(user);
 
@@ -88,5 +95,33 @@ public class UserServiceImpl implements UserService {
         registerMapper.insert(register);
 
         return true;
+    }
+
+    @Override
+    public UserLoginVo singIn(UserLoginDto userLoginDto) {
+        val wrapper = new LambdaQueryWrapper<User>()
+                .eq(User::getEmail, userLoginDto.getUsername())
+                .or()
+                .eq(User::getUsername, userLoginDto.getUsername());
+        val selectedUser = userMapper.selectOne(wrapper);
+        if (selectedUser == null) {
+            throw new CustomException("用户信息不存在，去注册一个吧");
+        }
+        if (!selectedUser.getPassword().equals(AesUtil.encrypt(userLoginDto.getPassword()))) {
+            throw new CustomException("密码输入错误啦，再试试");
+        }
+
+        // 只返回前端部分用户信息
+        val userVo = new UserVo();
+        BeanUtils.copyProperties(selectedUser, userVo);
+
+        // 生成token
+        val token = JwtUtil.generatorToken(selectedUser.getId(), selectedUser.getEmail());
+
+        UserLoginVo userLoginVo = new UserLoginVo();
+        userLoginVo.setToken(token);
+        userLoginVo.setUserInfo(userVo);
+
+        return userLoginVo;
     }
 }
