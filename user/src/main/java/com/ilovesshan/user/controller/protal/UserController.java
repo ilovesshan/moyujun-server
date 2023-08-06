@@ -5,9 +5,12 @@ import com.ilovesshan.common.model.R;
 import com.ilovesshan.common.util.UuidUtil;
 import com.ilovesshan.user.model.dto.UserLoginDto;
 import com.ilovesshan.user.model.dto.UserRegisterDto;
+import com.ilovesshan.user.model.po.UserInfo;
 import com.ilovesshan.user.model.vo.UserLoginVo;
 import com.ilovesshan.user.service.UserService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -41,6 +44,19 @@ public class UserController {
     public R<UserLoginVo> singIn(@RequestBody @Validated UserLoginDto userLoginDto) {
         UserLoginVo userLoginVo = userService.singIn(userLoginDto);
         return R.success(R.SUCCESS_MESSAGE_LOGIN, userLoginVo);
+    }
+
+
+    @GetMapping("/{id}")
+    @ApiOperation(value = "根据ID获取用户详细信息")
+    @ApiImplicitParams(
+            {
+                    @ApiImplicitParam(name = "id", value = "用户详情ID", dataType = "String", paramType = "path"),
+            }
+    )
+    public R<UserInfo> singIn(@PathVariable("id") String userId) {
+        UserInfo userInfo = userService.selectUserInfoById(userId);
+        return R.success(R.SUCCESS_MESSAGE_LOGIN, userInfo);
     }
 
     @GetMapping("/salt")

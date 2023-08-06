@@ -1,6 +1,7 @@
 package com.ilovesshan.user.controller.protal;
 
 import com.ilovesshan.common.model.R;
+import com.ilovesshan.user.model.dto.captchaVerifyDto;
 import com.ilovesshan.user.service.CheckCodeService;
 import com.ramostear.captcha.HappyCaptcha;
 import com.ramostear.captcha.support.CaptchaStyle;
@@ -9,6 +10,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -59,9 +61,8 @@ public class CheckCodeController {
 
     @PostMapping("/captcha")
     @ApiOperation(value = "校验图灵验证码")
-    @ApiImplicitParams(@ApiImplicitParam(name = "code", value = "验证码", required = true, paramType = "body"))
-    public R verify(@RequestBody String code, HttpServletRequest request) {
-        boolean checkResult = HappyCaptcha.verification(request, code, true);
+    public R verify(@RequestBody @Validated captchaVerifyDto captchaVerifyDto, HttpServletRequest request) {
+        boolean checkResult = HappyCaptcha.verification(request, captchaVerifyDto.getCode(), true);
         // 不管有没有成功都需要将当前验证码清理掉
         HappyCaptcha.remove(request);
         return checkResult ? R.success(R.SUCCESS_VERIFY_MESSAGE) : R.fail(R.ERROR_VERIFY_MESSAGE);

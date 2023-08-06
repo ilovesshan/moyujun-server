@@ -2,6 +2,7 @@ package com.ilovesshan.user.service;
 
 import com.ilovesshan.user.model.dto.UserLoginDto;
 import com.ilovesshan.user.model.dto.UserRegisterDto;
+import com.ilovesshan.user.model.po.UserInfo;
 import com.ilovesshan.user.model.vo.UserLoginVo;
 
 /**
@@ -15,4 +16,6 @@ public interface UserService {
     boolean singUp(UserRegisterDto userRegisterDto);
 
     UserLoginVo singIn(UserLoginDto userLoginDto);
+
+    UserInfo selectUserInfoById(String userId);
 }

@@ -107,9 +107,11 @@ public class UserServiceImpl implements UserService {
         if (selectedUser == null) {
             throw new CustomException("用户信息不存在，去注册一个吧");
         }
-        // 对用户传入的密码进行加盐以及RSA加密 再和数据库密码查询到的密码进行对比
-        String encryptPwd = RSAUtils.encryptedDataOnJava(userLoginDto.getPassword() + selectedUser.getSalt(), Constants.RASKey.PUBLIC_KEY);
-        if (!selectedUser.getPassword().equals(encryptPwd)) {
+        // 对用户传入的密码进行RSA解密
+        String userPwd = RSAUtils.decryptDataOnJava(userLoginDto.getPassword(), Constants.RASKey.PRIVATE_KEY);
+        // 对用户原始密码进行解密
+        String dbPwd = RSAUtils.decryptDataOnJava(selectedUser.getPassword(), Constants.RASKey.PRIVATE_KEY).replaceAll(selectedUser.getSalt(), "");
+        if (!dbPwd.equals(userPwd)) {
             throw new CustomException("密码输入错误啦，再试试");
         }
         // 将当前用户信息存在redis中(7天过期)
@@ -127,5 +129,10 @@ public class UserServiceImpl implements UserService {
         userLoginVo.setUserInfo(userVo);
 
         return userLoginVo;
+    }
+
+    @Override
+    public UserInfo selectUserInfoById(String userId) {
+        return userInfoMapper.selectById(userId);
     }
 }
